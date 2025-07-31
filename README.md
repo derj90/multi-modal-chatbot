@@ -1,41 +1,38 @@
-# Vercel AI SDK useChat with Attachments Example
+# AcompañaUMCE - Chat con Adjuntos
 
-This example demonstrates how to use the [Vercel AI SDK](https://sdk.vercel.ai/docs) with [Next.js](https://nextjs.org/) with the `useChat` hook to create a chat interface that can send and receive multi-modal messages from the AI provider of your choice.
+Este repositorio es un prototipo de la plataforma **AcompañaUMCE**, pensada como apoyo para estudiantes, docentes y el equipo UDFV de la UMCE. La aplicación está construida con **Next.js** y utiliza el **Vercel AI SDK** para ofrecer un chatbot capaz de recibir y mostrar archivos de texto e imágenes.
 
-## Deploy your own
+## Características principales
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-attachments&env=OPENAI_API_KEY&envDescription=API%20keys%20needed%20for%20application&envLink=platform.openai.com)
+- **Inicio de sesión** en `/login` con verificación del dominio `@umce.cl` y una lista temporal de cuentas autorizadas.
+- **Chat multi-modal** que permite enviar mensajes y adjuntar archivos (imágenes o texto) al asistente.
+- **API** en `app/api/chat/route.ts` que envía las conversaciones a OpenAI.
 
-## How to use
+## Requisitos
 
-Run [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+1. Node.js 18 o superior.
+2. Crear un archivo `.env` a partir de `.env.example` y definir la variable `OPENAI_API_KEY` con tu clave de OpenAI.
 
-```bash
-npx create-next-app --example https://github.com/vercel-labs/ai-sdk-preview-attachments ai-sdk-preview-attachments-example
-```
-
-```bash
-yarn create next-app --example https://github.com/vercel-labs/ai-sdk-preview-attachments ai-sdk-preview-attachments-example
-```
+## Instalación y uso
 
 ```bash
-pnpm create next-app --example https://github.com/vercel-labs/ai-sdk-preview-attachments ai-sdk-preview-attachments-example
+npm install
+npm run dev
 ```
 
-To run the example locally you need to:
+Visita `http://localhost:3000/login` para comenzar la sesión y acceder al chat.
 
-1. Sign up for accounts with the AI providers you want to use (e.g., OpenAI, Anthropic).
-2. Obtain API keys for each provider.
-3. Set the required environment variables as shown in the `.env.example` file, but in a new file called `.env`.
-4. `npm install` to install the required dependencies.
-5. `npm run dev` to launch the development server.
+### Comandos útiles
 
+- `npm run lint`: ejecuta ESLint para verificar la calidad del código.
 
-## Learn More
+## Estructura de carpetas destacada
 
-To learn more about Vercel AI SDK or Next.js take a look at the following resources:
+- `app/login/page.tsx` – Página de inicio de sesión.
+- `authorized-users.json` – Lista temporal de usuarios permitidos.
+- `app/(preview)/page.tsx` – Interfaz del chat con soporte de archivos.
+- `app/api/chat/route.ts` – Ruta API que se comunica con OpenAI.
 
-- [Vercel AI SDK docs](https://sdk.vercel.ai/docs)
-- [Vercel AI Playground](https://play.vercel.ai)
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+## Licencia
 
+Este proyecto se publica bajo la licencia Apache 2.0 incluida en el archivo `LICENSE`.
