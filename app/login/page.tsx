@@ -1,23 +1,48 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import authorizedUsers from "@/authorized-users.json";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [message, setMessage] = useState<string>("");
 
-  const handleLogin = () => {
-    const email = prompt("Ingresa tu correo institucional") || "";
-    if (!email.endsWith("@umce.cl")) {
-      setMessage("Tu correo no pertenece al dominio institucional");
+  const checkUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const { data } = await supabase
+      .from("authorized_users")
+      .select("rol")
+      .eq("email", session.user.email)
+      .single();
+    if (!data) {
+      await supabase.auth.signOut();
+      setMessage(
+        "Tu cuenta no está autorizada para acceder a esta plataforma. Por favor contacta a <udfv@umce.cl>"
+      );
       return;
     }
-    if (!authorizedUsers.includes(email)) {
-      setMessage("Tu cuenta no está habilitada para acceder.");
-      return;
-    }
-    setMessage("Login exitoso (simulado)");
+    if (data.rol === "admin") router.push("/admin");
+    else if (data.rol === "student" || data.rol === "teacher") router.push("/chat");
+  };
+
+  useEffect(() => {
+    checkUser();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      checkUser();
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogin = async () => {
+    setMessage("");
+    await supabase.auth.signInWithOAuth({ provider: "google" });
   };
 
   return (
@@ -37,7 +62,9 @@ export default function LoginPage() {
           <Image src="/google-logo.png" alt="Google" width={20} height={20} />
           <span className="font-medium">Iniciar sesión con Google</span>
         </button>
-        {message && <p className="text-red-600 mt-4 text-sm text-center">{message}</p>}
+        {message && (
+          <p className="text-red-600 mt-4 text-sm text-center" dangerouslySetInnerHTML={{ __html: message }} />
+        )}
       </main>
 
       <footer className="text-xs text-center text-gray-500 mt-8">
