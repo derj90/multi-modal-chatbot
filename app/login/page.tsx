@@ -10,22 +10,32 @@ export default function LoginPage() {
   const [message, setMessage] = useState<string>("");
 
   const checkUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) return;
+
     const { data } = await supabase
       .from("authorized_users")
       .select("rol")
       .eq("email", session.user.email)
       .single();
+
     if (!data) {
       await supabase.auth.signOut();
-      setMessage(
-        "Tu cuenta no está autorizada para acceder a esta plataforma. Por favor contacta a <udfv@umce.cl>"
-      );
+      setMessage("Usuario no autorizado para usar esta plataforma.");
       return;
     }
+
+    localStorage.setItem("rol", data.rol);
+
     if (data.rol === "admin") router.push("/admin");
-    else if (data.rol === "student" || data.rol === "teacher") router.push("/chat");
+    else if (data.rol === "docente") router.push("/docente");
+    else if (data.rol === "estudiante") router.push("/estudiante");
+    else {
+      await supabase.auth.signOut();
+      setMessage("Usuario no autorizado para usar esta plataforma.");
+    }
   };
 
   useEffect(() => {
